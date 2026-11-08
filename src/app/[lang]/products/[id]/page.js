@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 const products = [
   {
     id: "101",
@@ -11,13 +13,28 @@ const products = [
   },
 ];
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+
+  const product = products.find((item) => item.id === id);
+
+  return {
+    title: product
+      ? `${product.name} | My Store`
+      : "Product Not Found",
+    description: product
+      ? `Explore ${product.name} at My Store.`
+      : "The requested product was not found.",
+  };
+}
+
 export default async function ProductDetails({ params }) {
   const { id } = await params;
 
   const product = products.find((item) => item.id === id);
 
   if (!product) {
-    return <h1>Product not found!</h1>;
+    notFound();
   }
 
   return (
